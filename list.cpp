@@ -52,8 +52,8 @@ protected:
 	void init ();
 	int clear ();
 	void copyNodes ( ListNode *p , int n );     // 从p开始复制n个节点 
-// 	void merge ( ListNode * &p1, int n1, List<T>&, ListNode *p2, int n2); //归并
-// 	void mergeSort ( ListNode *&p, int n);      // 对从p开始连续的n个节点归并排序
+	void merge ( ListNode * &p1, int n1, List<T>&L, ListNode *p2, int n2); //[p1,p1+n) 本串p1开始n1个节点与 L串p2开始n2个节点归并排序 
+	void mergeSort ( ListNode *&p, int n);      // 对从p开始连续的n个节点归并排序
 	void selectionSort ( ListNode *p, int n);   // [ p,p+n ) 选择排序
 	void insertionSort ( ListNode *p, int n);   // 对从p开始连续的n个节点插入排序
 
@@ -273,4 +273,72 @@ void List<T>::insertionSort( ListNode * p , int n )
 		remove( p->pred );
 		r++;
 	}
+}
+
+template <typename T>
+void List<T>::merge ( ListNode * &p1, int n1, List<T>& L, ListNode *p2, int n2)
+{
+////方法一：
+// 	ListNode *pree;
+// 	ListNode *pre1=new ListNode, *pre2=new ListNode;
+// 	ListNode *aft=new ListNode;
+// 	pre1->succ=p1; p1->pred=pre1;
+// 	pre2->succ=p2; p2->pred=pre2;
+// 	pree=p2;
+// 	for(int i=0; i<n2; i++)
+// 		pree=pree->succ;
+// 	aft->succ=pree;  pree->pred=aft;
+// 	pree=p1->pred;
+// 	for( int j=0 , k=0 ; j<n1 || k<n2 ; )
+// 	{
+// 		if( j<n1 && ( ( n2<k ) || ( pre1->succ->data < pre2->succ->data ) ) )
+// 		{
+// 			insertAfter( pree, remove(pre1->succ) );
+// 			pree=pree->succ;
+// 			j++;
+// 		}
+// 		if( k<n2 && ( ( n1<j ) || ( pre2->succ->data < pre1->succ->data ) ) )
+// 		{
+// 			insertAfter( pree, remove(pre2->succ) );
+// 			pree=pree->succ;
+// 			k++;
+// 		}
+// 	}
+// 	aft->succ->pred=pree;  pree->succ=aft->succ;
+// 	p1=pree->succ;
+// 	delete aft,pre1,pre2;
+// 	return;
+
+////方法二：
+	ListNode *pree=p1->pred;
+	while( 0<n2 )
+	{
+		if( 0<n1 && p1->data<=p2->data )
+		{
+			if( p2== (p1=p1->succ)->data )
+				break;
+			n1--;
+		}
+		else
+		{	
+			insertBefore( p1 , L.remove( (p2=p2->succ)->pred ) );
+			n2--;
+		}
+	}
+	p1=pree->succ;
+	return;
+}
+
+template <typename T>
+void List<T>::mergeSort( ListNode *&p, int n )
+{
+	if(n<2) return;
+	int mid=n/2;
+	ListNode *tem=p;
+	for(int i=0; i<mid; i++)
+		tem=tem->succ;
+	mergeSort( p, mid );
+	mergeSort( tem, n-mid );
+	merge( p,mid, *this , tem , n-mid );
+	return;
 }

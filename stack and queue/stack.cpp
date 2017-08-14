@@ -279,6 +279,33 @@ float evaluate ( char * s , char *&RPN )
 	}
 	return opnd.pop();
 }
+float rpnEvaluate( char * RPN )
+{
+	Stack<float> opnd;
+	float num1,num2;
+	int len=strlen(RPN);
+	RPN[len++]='\0';
+	while(len--)
+	{
+		if( (*RPN)<='9'&&(*RPN)>='0' ) //当前是操作数
+		{	
+			readNumber( RPN, opnd );  // 可能是多位数
+		}
+		else
+		{
+			char op=*RPN;
+			if(op=='!')
+				opnd.push( cal( op, opnd.pop() ) );
+			else
+			{
+				num2=opnd.pop();
+				num1=opnd.pop();
+				opnd.push( cal(num1,op,num2));
+			}
+		}
+	}
+	return opnd.pop();
+}
 //////// 栈应用之四：延迟缓冲：中缀表达式求值 ////////
 //////// 栈应用之五：栈式计算：RPN转换 ////////
 

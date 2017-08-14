@@ -24,8 +24,8 @@ public:
 	int size()const {return last-first;}
 	T& front()const { if(!empty())return data[first]; else exit(1);}
 	T& rear()const { if(!empty())return data[last-1]; else exit(1);}
-	void enqueue( T const & e);
-	T dequeue();
+	void enqueue( T const & e) { expand(); data[last++]=e; }
+	T dequeue() { return data[(first++)-1]; }
 };
 
 template <typename T>
@@ -59,17 +59,4 @@ void queue<T>::expand()
 		tem=NULL;
 	}
 	return;
-}
-
-template <typename T>
-void enqueue( T const &e )
-{
-	expand();
-	data[last++]=e;
-}
-
-template <typename T>
-T queue<T>::dequeue()
-{
-	return data[ (first++)-1];
 }

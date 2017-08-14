@@ -1,4 +1,7 @@
-﻿const char Prior[9][9] = 
+﻿#include <iostream>
+using namespace std;
+
+const char Prior[9][9] = 
 {  
 //        +   -   *   /   ^   !   (   )  \0
 /* + */  '>','>','<','<','<','<','<','>','>',
@@ -25,14 +28,24 @@ protected:
 
 public:
 	Stack(){ _size =0 ; maxsize=4; data=new T[maxsize]; };
+	Stack( T * origin , int n );
 	~Stack() { delete []data; }
-	void push( T const & e ) { data[_size++]=e; expand(); }
-	T pop( ) { return data[--_size];  shrink(); }
+	void push( T const & e ) { expand(); data[_size++]=e;  }
+	T pop( ) { shrink(); return data[--_size];   }
 	T & top( ) { return data[_size-1];};
-	int empty() {return _size==0;}
-	int size() {return _size;}
-	
+	int empty()const {return _size==0;}
+	int size()const {return _size;}
+	int find( T const & e )const;
 };
+
+template <typename T>
+int Stack<T>::find( T const & e ) const
+{
+	for( int i=0 ; i<_size ; i++)
+		if( data[i] == e )
+			return i;
+	return -1;
+}
 
 template <typename T>
 void Stack<T>::expand() 
@@ -64,6 +77,16 @@ void Stack<T>::shrink()
 	return;
 }
 
+template <typename T>
+Stack<T>::Stack( T * origin , int n )
+{
+	_size=n;
+	maxsize=_size+2;
+	data=new T [maxsize];
+	for(int i=0 ; i<n; i++)
+		data[n-i-1]=origin[i];
+}
+
 //////// 栈应用之一：逆序输出：进制转换////////
 void convert(  int n , int base ) 
 {
@@ -80,6 +103,7 @@ void convert(  int n , int base )
 	cout<<endl;
 }
 //////// 栈应用之一：逆序输出：进制转换////////
+
 
 //////// 栈应用之二：递归嵌套：：括号匹配 ////////
 bool judge ( char *s , int n ) 
@@ -101,6 +125,43 @@ bool judge ( char *s , int n )
 	return false;
 }
 //////// 栈应用之二：递归嵌套：：括号匹配 ////////
+
+
+//////// 栈应用之三：递归嵌套：栈混洗 ////////
+template <typename T>
+bool stackPermutation( T *origin, T * b , int n )
+{
+	Stack<T> s;
+	Stack<T> ori( origin ,n );
+	for( int j=0; j<n ; j++ )
+	{	
+		if( s.empty() )
+		{	
+			if( ori.empty() ) return false;
+			s.push( ori.pop() );
+			cout<<"push\n";
+		}
+		while( !s.empty() )
+		{
+			if( s.top()==b[j] )
+			{
+				s.pop();
+				cout<<"pop\n";
+				break;
+			}
+			else
+			{
+				if( ori.empty() ) return false;
+				s.push( ori.pop() );
+				cout<<"push\n";
+			}
+		}
+	}
+	if( !s.empty() || !ori.empty() )
+		return false;
+	return true;
+}
+//////// 栈应用之三：递归嵌套：栈混洗 ////////
 
 
 //////// 栈应用之四：延迟缓冲：中缀表达式求值 ////////
@@ -149,6 +210,7 @@ float cal( float num1, char op , float num2)
 	case '*': return num1*num2;
 	case '/': return num1/num2;
 	case '^': return pow(num1,num2);
+	default : exit(1);
 	}
 }
 float cal( char op, float num1)
@@ -177,11 +239,12 @@ void append( char *&RPN, char op )
 	sprintf( RPN+len, "%c \0",op );
 }
 float evaluate ( char * s , char *&RPN )
-{
+{ // RPN转换速度非常非常慢
 	Stack<float> opnd;
 	Stack<char> optr;
 	float num1,num2;
 	s[strlen(s)]='\0';
+	RPN[0]='\0';
 	optr.push('\0'); // 结尾操作符
 	while( !optr.empty() )
 	{
@@ -218,3 +281,45 @@ float evaluate ( char * s , char *&RPN )
 }
 //////// 栈应用之四：延迟缓冲：中缀表达式求值 ////////
 //////// 栈应用之五：栈式计算：RPN转换 ////////
+
+
+//////// 栈应用之六：试探回溯：n皇后问题 ////////
+struct Queen
+{
+	int x,y;
+	Queen( int xx=0, int yy=0 ):x(xx),y(yy){}
+	bool operator == ( Queen const & a ) const
+	{
+		if( x==a.x || y==a.y || x+y==a.x+a.y || x-y==a.x-a.y )
+			return true;
+		return false;
+	}
+	bool operator != ( Queen const & a ) const { return !( *this == a );}
+};
+int placeQueens( int n ) // n皇后
+{
+	int num_solution=0;
+	Stack< Queen >a; 
+	Queen q(0,0);
+	do
+	{
+		if( a.size()>=n || q.y>=n )
+		{	
+			q=a.pop();
+			q.y++;
+		}
+		while( q.y<n && a.find(q)>=0 )
+			q.y++;
+		if( q.y<n )
+		{
+			a.push( q );
+			if( a.size()>=n )
+				num_solution++;
+			q.x++;
+			q.y=0;
+		}
+	}
+	while( !( q.x==0 && q.y>=n ) );
+	return num_solution;
+}
+//////// 栈应用之六：试探回溯：n皇后问题 ////////

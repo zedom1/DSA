@@ -1,5 +1,5 @@
 ﻿template <typename T>
-struct queue:public List<T> //利用双向链表版
+struct Queue:public List<T> //利用双向链表版
 { // size和empty直接沿用
 	void enqueue ( T const& e ) {insertAsLast(e);}
 	T dequeue() { return remove(first()); }
@@ -8,7 +8,7 @@ struct queue:public List<T> //利用双向链表版
 };
 
 template <typename T>
-struct queue  // 数组模拟版
+struct Queue  // 数组模拟版
 {
 private:
 	T *data;
@@ -18,18 +18,18 @@ protected:
 	void expand();
 
 public:
-	queue();
-	~queue() {delete []data;}
+	Queue();
+	~Queue() {delete []data;}
 	bool empty()const {return first==last;}
 	int size()const {return last-first;}
 	T& front()const { if(!empty())return data[first]; else exit(1);}
 	T& rear()const { if(!empty())return data[last-1]; else exit(1);}
 	void enqueue( T const & e) { expand(); data[last++]=e; }
-	T dequeue() { return data[(first++)-1]; }
+	T dequeue() { return data[first++]; }
 };
 
 template <typename T>
-queue<T>::queue()
+Queue<T>::Queue()
 {
 	maxsize=4;
 	data=new T[maxsize];
@@ -37,9 +37,9 @@ queue<T>::queue()
 }
 
 template <typename T>
-void queue<T>::expand()
+void Queue<T>::expand()
 {
-	if( size()> maxsize*3/4)
+	if( size()>= maxsize*3/4)
 	{
 		T *tem=new T [maxsize*2];
 		maxsize*=2;
@@ -49,7 +49,7 @@ void queue<T>::expand()
 		data=tem;
 		tem=NULL;
 	}
-	if( maxsize-last<2)
+	if( maxsize-last<=2)
 	{
 		T *tem=new T [maxsize];
 		for(int i=first,m=0 ; i<last ; i++)
@@ -57,6 +57,8 @@ void queue<T>::expand()
 		delete []data;
 		data=tem;
 		tem=NULL;
+		last-=first;
+		first=0;
 	}
 	return;
 }

@@ -235,6 +235,11 @@ public:
 	template <typename V>
 	void travPost( V & visit )   // 后序遍历
 	{ rand()%2==0?_root->travPost_R(visit):_root->travPost_I(visit); }
+
+	// rebuild
+	void rebuild_PI( T *pre,T *ins,int len );   //  前序+中序
+	void rebuild_IP( T *ins,T *post,int len );   //  中序+后序
+	void rebuild_PP( T *pre,T *post,int len );   //  (前序+后序)*真二叉树
 };
 
 template <typename T>
@@ -328,4 +333,75 @@ BinTree<T> * BinTree<T>::secede( BinNode<T>* x )
 	a->_size=x->size();
 	_size-=a->_size;
 	return a;
+}
+
+template <typename T>
+void BinTree<T>::rebuild_PP( T *pre,T *post,int len )
+{
+	_root=new BinNode<T> (pre[0]);
+	rebuildSub_PP( _root,pre,post,len );
+	return;
+}
+template <typename T>
+BinNode<T> * rebuildSub_PP( T *pre , T *post, int len )
+{ 
+	BinNode<T> *s=NULL;
+	if( len<=0 ) return s;
+	if(len==1)
+	{
+		s=new BinNode<T>(*pre);
+		return s;
+	}
+	int i;
+	for(i=0; *(post+i)!=*(pre+1); i++);
+	s=new BinNode<T>(*pre);
+	s->lc=rebuildSub_PP(pre+1,post,i+1);
+	s->rc=rebuildSub_PP(pre+i+2,post+i+1,len-i-2);
+	return s;
+}
+
+template <typename T>
+void BinTree<T>::rebuild_PI( T* pre, T* ins, int len )
+{
+	_root=rebuildSub_PI(pre,ins,len);
+}
+template <typename T>
+BinNode<T> * rebuildSub_PI( T* pre, T* ins, int len ) // 先序+中序重构
+{
+	BinNode<T> *s=NULL;
+	if(len<=0) return s;
+	if(len==1)
+	{
+		s=new BinNode<T>(*pre);
+		return s;
+	}
+	int i;
+	for(i=0; *(ins+i)!=*(pre); i++);
+	s=new BinNode<T>(*pre);
+	s->lc=rebuildSub_PI( pre+1, ins, i );
+	s->rc=rebuildSub_PI( pre+1+i, ins+i+1, len-i-1 );
+	return s;
+}
+
+template <typename T>
+void BinTree<T>::rebuild_IP( T* ins, T* post, int len )
+{
+	_root=rebuildSub_IP(ins,post,len);
+}
+template <typename T>
+BinNode<T> * rebuildSub_IP( T* ins, T* post, int len ) // 中序+后序重构
+{
+	BinNode<T> *s=NULL;
+	if(len<=0) return s;
+	if(len==1)
+	{
+		s=new BinNode<T>(* (post+len-1) );
+		return s;
+	}
+	int i;
+	for(i=0; *(ins+i)!=*(post+len-1); i++);
+	s=new BinNode<T>(*(post+len-1));
+	s->lc=rebuildSub_IP( ins, post, i );
+	s->rc=rebuildSub_IP( ins+1+i, post+i, len-i-2 );
+	return s;
 }

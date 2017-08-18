@@ -22,7 +22,7 @@ struct BinNode
 	{ return lChild=new BinNode(e,this); }
 	BinNode<T> * insertAsRC( T const & e ) //作为右孩子插入
 	{ return rChild=new BinNode(e,this); }
-	
+
 	BinNode<T> * succ();   // 中序遍历时的后继
 	
 	template <typename V>
@@ -58,6 +58,7 @@ int BinNode<T>::size() const
 		s+=rChild->size();
 	return s;
 }
+
 template <typename T>
 BinNode<T> *BinNode<T>::succ()
 {
@@ -355,8 +356,8 @@ BinNode<T> * rebuildSub_PP( T *pre , T *post, int len )
 	int i;
 	for(i=0; *(post+i)!=*(pre+1); i++);
 	s=new BinNode<T>(*pre);
-	s->lc=rebuildSub_PP(pre+1,post,i+1);
-	s->rc=rebuildSub_PP(pre+i+2,post+i+1,len-i-2);
+	s->lChild=rebuildSub_PP(pre+1,post,i+1);
+	s->rChild=rebuildSub_PP(pre+i+2,post+i+1,len-i-2);
 	return s;
 }
 
@@ -378,8 +379,8 @@ BinNode<T> * rebuildSub_PI( T* pre, T* ins, int len ) // 先序+中序重构
 	int i;
 	for(i=0; *(ins+i)!=*(pre); i++);
 	s=new BinNode<T>(*pre);
-	s->lc=rebuildSub_PI( pre+1, ins, i );
-	s->rc=rebuildSub_PI( pre+1+i, ins+i+1, len-i-1 );
+	s->lChild=rebuildSub_PI( pre+1, ins, i );
+	s->rChild=rebuildSub_PI( pre+1+i, ins+i+1, len-i-1 );
 	return s;
 }
 
@@ -401,7 +402,7 @@ BinNode<T> * rebuildSub_IP( T* ins, T* post, int len ) // 中序+后序重构
 	int i;
 	for(i=0; *(ins+i)!=*(post+len-1); i++);
 	s=new BinNode<T>(*(post+len-1));
-	s->lc=rebuildSub_IP( ins, post, i );
-	s->rc=rebuildSub_IP( ins+1+i, post+i, len-i-2 );
+	s->lChild=rebuildSub_IP( ins, post, i );
+	s->rChild=rebuildSub_IP( ins+1+i, post+i, len-i-2 );
 	return s;
 }

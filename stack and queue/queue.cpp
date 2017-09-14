@@ -1,5 +1,7 @@
-﻿template <typename T>
-struct Queue:public List<T> //利用双向链表版
+﻿
+////   版本一：利用已实现的双向链表
+template <typename T>
+struct Queue:public List<T> 
 { // size和empty直接沿用
 	void enqueue ( T const& e ) {insertAsLast(e);}
 	T dequeue() { return remove(first()); }
@@ -7,8 +9,9 @@ struct Queue:public List<T> //利用双向链表版
 	T& rear() { return last()->data; }
 };
 
+////   版本二：数组模拟版
 template <typename T>
-struct Queue  // 数组模拟版
+struct Queue
 {
 private:
 	T *data;
@@ -61,4 +64,54 @@ void Queue<T>::expand()
 		first=0;
 	}
 	return;
-}
+} 
+
+
+////   版本三：环状数组版
+template <typename T>
+struct Queue
+{
+private:
+	T *data;
+	int maxsize;
+	int first;
+	int last;
+	int size;
+
+public:
+	Queue(int size=0)
+	{
+		maxsize=size+1;
+		last=0;
+		first=1;
+		data= new T[maxsize];
+	}
+	~Queue()
+	{
+		delete []data;
+	}
+	void clear()
+	{
+		last=first=0;
+	}
+	void enqueue(const T & it)
+	{
+		last=(last+1)%maxsize;
+		data[last]=it;
+	}
+	T dequeue()
+	{
+		T it = data[first];
+		first = (first+1)%maxsize;
+		return it;
+	}
+	const T firstValue()
+	{
+		return data[first];
+	}
+	int length()
+	{
+		return ((last+maxsize)-first+1)%maxsize;
+	}
+
+};

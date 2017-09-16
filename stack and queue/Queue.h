@@ -1,4 +1,5 @@
-﻿
+﻿# include <DoubleList.h>
+
 ////   版本一：利用已实现的双向链表
 template <typename T>
 struct Queue:public List<T> 

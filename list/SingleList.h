@@ -1,60 +1,60 @@
 ﻿template < typename T >
-struct node
+struct Node
 {
     T data;
-    node<T> *succ;
-    node( T const & e , node<T> * suc=NULL):data(e),succ(suc) {}
-    node() {succ=NULL;}
-    node<T> * insertAft( T const & e );
+    Node<T> *succ;
+    Node( T const & e , Node<T> * suc=NULL):data(e),succ(suc) {}
+    Node() {succ=NULL;}
+    Node<T> * insertAft( T const & e );
 };
 
 template < typename T >
-node<T> * node<T>::insertAft( T const & e )
+Node<T> * Node<T>::insertAft( T const & e )
 {
-	node<T> *tem=new node<T>( e , succ );
+	Node<T> *tem=new Node<T>( e , succ );
 	succ=tem;
 	return tem;
 }
 
 template < typename T >
-struct list
+struct List
 {
 private:
-    node<T> *header;
+    Node<T> *header;
     int _size;
 public:
 	void init ();
 	int clear ();
-	void copyNodes ( node<T> *p , int n );     
+	void copyNodes ( Node<T> *p , int n );     
 	//从p开始复制n个节点到链表末尾 
-	void merge ( node<T> *& p1, int n1, node<T> *&p2, int n2 ); 
+	void merge ( Node<T> *& p1, int n1, Node<T> *&p2, int n2 ); 
 	//[p1,p1+n) 本串p1开始n1个节点与 L串p2开始n2个节点归并排序
-	void mergeSort ( node<T> *&p, int n );      
+	void mergeSort ( Node<T> *&p, int n );      
 	// 对从p开始连续的n个节点归并排序
 
-	list() { init(); }
-	list( node<T> *p , int n );     // 从p开始复制n个节点 
-	~list();
+	List() { init(); }
+	List( Node<T> *p , int n );     // 从p开始复制n个节点 
+	~List();
 
 	// 只读接口
 	bool empty() { return _size==0; }
 	int size() { return _size; }
 	T& operator[] ( int r ) const;    // 实现寻秩访问
-	node<T> * find( T const&e ) const;
-	node<T> * find( T const& e,  node<T>* p, int n ) const; 
+	Node<T> * find( T const&e ) const;
+	Node<T> * find( T const& e,  Node<T>* p, int n ) const; 
 	// (无序)从节点p向后n个节点（不含p）内找e
-	node<T> * search( T const & e , node<T> * p , int n ) const; 
+	Node<T> * search( T const & e , Node<T> * p , int n ) const; 
 	// (有序) 不大于e的最后一个
 	void show();
 
 	// 可写接口
-	node<T> * insertBefore( node<T> *p, T const & e );
-	node<T> * insertAfter( node<T> *p, T const & e );
-	node<T> * insertLast( T const & e );
-	node<T> * insertFirst( T const & e );
+	Node<T> * insertBefore( Node<T> *p, T const & e );
+	Node<T> * insertAfter( Node<T> *p, T const & e );
+	Node<T> * insertLast( T const & e );
+	Node<T> * insertFirst( T const & e );
 	void createListT( T const * e , int n ); // 尾插法创建链表
 	void createListH( T const * e , int n ); // 头插法创建链表
-	T remove( node<T> *p );
+	T remove( Node<T> *p );
 	int deduplicate (); // 无序列表去重
 	int uniquify ();    // 有序列表去重
 	void sort(); // 排序
@@ -62,24 +62,24 @@ public:
 };
 
 template <typename T>
-void list<T>::init()
+void List<T>::init()
 {
-	header = new node<T>;
+	header = new Node<T>;
 	_size=0;
 }
 
 template <typename T>
-list<T>::~list()
+List<T>::~List()
 {
 	clear();
 	delete header;
 }
 
 template <typename T>
-T list<T>::remove( node<T> * p )
+T List<T>::remove( Node<T> * p )
 {
 	T tem=p->data;
-	node<T> *pre=header;
+	Node<T> *pre=header;
 	while( pre->succ!=p )
 		pre=pre->succ;
 	pre->succ=p->succ;
@@ -89,7 +89,7 @@ T list<T>::remove( node<T> * p )
 }
 
 template <typename T>
-int list<T>::clear()
+int List<T>::clear()
 {
 	int old_size=_size;
 	if( header->succ==NULL )
@@ -100,32 +100,32 @@ int list<T>::clear()
 }
 
 template <typename T>
-T& list<T>::operator[] (int r) const
+T& List<T>::operator[] (int r) const
 {
-	node<T> *p=header->succ;
+	Node<T> *p=header->succ;
 	while( r-- && p )
 		p=p->succ;
 	return p->data;
 }
 
 template <typename T>
-list<T>::list( node<T> * p, int n )
+List<T>::List( Node<T> * p, int n )
 {
 	init();
 	copyNodes( p , n );
 }
 
 template < typename T >
-void list<T>::copyNodes( node<T> * p, int n )
+void List<T>::copyNodes( Node<T> * p, int n )
 {
-	node<T> *tem=header;
+	Node<T> *tem=header;
 	while( tem->succ )
 		tem=tem->succ;
-	node<T> *create;
+	Node<T> *create;
 	_size+=n;
 	while(n--)
 	{
-		create=new node<T> ( p->data );
+		create=new Node<T> ( p->data );
 		tem->succ=create;
 		p=p->succ;
 		tem=tem->succ;
@@ -134,14 +134,14 @@ void list<T>::copyNodes( node<T> * p, int n )
 }
 
 template < typename T >
-void list<T>::createListT( T const * e , int n )
+void List<T>::createListT( T const * e , int n )
 {
-	node<T> * last=header;
-	node<T> * tem;
+	Node<T> * last=header;
+	Node<T> * tem;
 	_size+=n;
 	for( int i=0; i<n; i++ )
 	{
-		tem = new node<T>( e[i] );
+		tem = new Node<T>( e[i] );
 		last->succ=tem;
 		last=tem;
 	}
@@ -149,60 +149,60 @@ void list<T>::createListT( T const * e , int n )
 }
 
 template < typename T >
-void list<T>::createListH( T const * e , int n )
+void List<T>::createListH( T const * e , int n )
 {
-	node<T> * tem;
+	Node<T> * tem;
 	_size+=n;
 	for( int i=0; i<n; i++ )
 	{
-		tem = new node<T>( e[i], header->succ );
+		tem = new Node<T>( e[i], header->succ );
 		header->succ=tem;
 	}
 	return;
 }
 
 template < typename T >
-node<T> * list<T>::insertBefore( node<T> *p, T const & e )
+Node<T> * List<T>::insertBefore( Node<T> *p, T const & e )
 {
     _size++; 
-    node<T> *tem=header;
+    Node<T> *tem=header;
     while( tem->succ!=p )
 		tem=tem->succ;
     return tem->insertAft(e); 
 }
 
 template < typename T >
-node<T> * list<T>::insertAfter( node<T> *p, T const & e)
+Node<T> * List<T>::insertAfter( Node<T> *p, T const & e)
 { 
 	_size++; 
 	return p->insertAft(e); 
 }
 
 template < typename T >
-node<T> * list<T>::insertLast( T const & e )
+Node<T> * List<T>::insertLast( T const & e )
 { 
 	_size++; 
-	node<T> *tem=header;
+	Node<T> *tem=header;
 	while( tem->succ )
 		tem=tem->succ;
 	return tem->insertAft(e);
 }
 
 template < typename T >
-node<T> * list<T>::insertFirst( T const & e )
+Node<T> * List<T>::insertFirst( T const & e )
 { 
 	_size++; 
 	return header->insertAft(e);
 }
 
 template < typename T >
-node<T> * list<T>::find( T const&e ) const
+Node<T> * List<T>::find( T const&e ) const
 {
 	return find( e, header, ,_size );
 }
 
 template <typename T>
-node<T> * list<T>::find( T const& e, node<T>* p , int n ) const 
+Node<T> * List<T>::find( T const& e, Node<T>* p , int n ) const 
 {
 	while(n--)
 		if( e==( p=p->succ )->data )
@@ -211,9 +211,9 @@ node<T> * list<T>::find( T const& e, node<T>* p , int n ) const
 }
 
 template <typename T>
-node<T> * list<T>::search( T const & e, node<T> * p, int n ) const
+Node<T> * List<T>::search( T const & e, Node<T> * p, int n ) const
 {
-	node<T> *tem=header;
+	Node<T> *tem=header;
 	while( tem->succ != p )
 		tem=tem->succ;
 	while( n-- &&p )
@@ -227,14 +227,14 @@ node<T> * list<T>::search( T const & e, node<T> * p, int n ) const
 }
 
 template <typename T>
-void list<T>::merge ( node<T> * &p1, int n1, node<T> *&p2, int n2 )
+void List<T>::merge ( Node<T> * &p1, int n1, Node<T> *&p2, int n2 )
 {
-	node<T> *head;
-	node<T> *pree=header;
+	Node<T> *head;
+	Node<T> *pree=header;
 	while( pree->succ!=p1 )
 		pree=pree->succ;
 	head=pree;
-	node<T> *px1=p1,*px2=p2,*px3;
+	Node<T> *px1=p1,*px2=p2,*px3;
 	for(int i=0; i<n1-1 ; i++)
 		px1=px1->succ;
 	for(int i=0; i<n2-1 ; i++)
@@ -271,11 +271,11 @@ void list<T>::merge ( node<T> * &p1, int n1, node<T> *&p2, int n2 )
 }
 
 template <typename T>
-void list<T>::mergeSort( node<T> *&p, int n )
+void List<T>::mergeSort( Node<T> *&p, int n )
 { // [ p, p+n ]
 	if(n<2) return;
 	int mid=n/2;
-	node<T> *tem=p;
+	Node<T> *tem=p;
 	for(int i=0; i<mid; i++)  tem=tem->succ;
 	mergeSort( p, mid );
 	mergeSort( tem, n-mid );
@@ -284,12 +284,12 @@ void list<T>::mergeSort( node<T> *&p, int n )
 }
 
 template <typename T>
-int list<T>::deduplicate()
+int List<T>::deduplicate()
 {
 	if( _size<2 )
 		return 0;
-	node<T> *p=header->succ->succ;
-	node<T> *pre=header->succ;
+	Node<T> *p=header->succ->succ;
+	Node<T> *pre=header->succ;
 	int old_size=_size;
 	int r=1;
 	while( p )
@@ -309,21 +309,21 @@ int list<T>::deduplicate()
 }
 
 template <typename T>
-int list<T>::uniquify()
+int List<T>::uniquify()
 {
 	if(_size<2) 
 		return 0;
 	int old_size=_size;
-	node<T> *p=header->succ,*q;
+	Node<T> *p=header->succ,*q;
 	while( NULL != ( q = p->succ ) )
 		(p->data == q->data) ? remove(q) : (p=q);
 	return old_size-_size;
 }
 
 template <typename T>
-void list<T>::show()
+void List<T>::show()
 {
-	node<T> * tem=header->succ;
+	Node<T> * tem=header->succ;
 	while(tem)
 	{
 		cout<<tem->data<<" ";
@@ -334,19 +334,19 @@ void list<T>::show()
 }
 
 template <typename T>
-void list<T>::sort()
+void List<T>::sort()
 {
 	mergeSort( header->succ , _size );
 	return;
 }
 
 template <typename T>
-void list<T>::reverse()
+void List<T>::reverse()
 {
 	if(_size<2)
 		return;
-	node<T> *fir=header->succ;
-	node<T> *tem;
+	Node<T> *fir=header->succ;
+	Node<T> *tem;
 	while( fir->succ )
 	{
 		tem=fir->succ;

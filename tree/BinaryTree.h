@@ -1,4 +1,7 @@
-﻿#define stature(p) ((p)?(p->height):-1)
+﻿#include<Stack.h>
+#include<Queue.h>
+
+#define stature(p) ((p)?(p->height):-1)
 
 template<typename T>
 struct v
@@ -158,24 +161,23 @@ void BinNode<T>::travPost_I( V & visit )
 	Stack<BinNode<T> *> s;
 	BinNode<T> * x=this;
 	s.push(x);
-	BinNode<T> * c=s.top();
 	while(1)
 	{
 		if(s.empty()) break;
 		if(s.top()!=x->parent)
 		{
-			c=s.top();
+			x=s.top();
 			while(1)
 			{
-				if(c->rChild) 
-					s.push(c->rChild);
+				if(x->rChild) 
+					s.push(x->rChild);
 				if(c->lChild) 
 				{
-					s.push(c->lChild);
-					c=c->lChild;
+					s.push(x->lChild);
+					x=x->lChild;
 				}
-				else if(c->rChild)
-					c=c->rChild;
+				else if(x->rChild)
+					x=x->rChild;
 				else
 					break;
 			}

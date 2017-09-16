@@ -1,6 +1,4 @@
-﻿#include <iostream>
-using namespace std;
-
+﻿
 const char Prior[9][9] = 
 {  
 //        +   -   *   /   ^   !   (   )  \0

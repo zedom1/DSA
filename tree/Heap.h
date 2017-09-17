@@ -8,6 +8,18 @@ struct Heap
 };
 
 template <typename T>
+bool IsEmpty(Heap<T>* h)
+{
+	return h->size==0;
+}
+
+template <typename T>
+bool IsFull(Heap<T>* h)
+{
+	return h->size==h->capacity;
+}
+
+template <typename T>
 Heap<T>* Create( int MaxSize)
 {
 	Heap<T>* h = new Heap<T>();
@@ -79,7 +91,24 @@ T DeleteMin( Heap<T>* h )
 template <typename T>
 Heap<T>* BuildMinHeap( Heap<T>* h )
 {
-
+	int parent, child;
+	T tem;
+	for( parent = h->size/2 ; h>=1 ; h-- )
+	{
+		tem = h->data[parent];
+		child = parent *2;
+		while( child <=size )
+		{
+			if( child != h->size  && h->data[child]>h.data[child+1])
+				child++;
+			if( h->data[parent]<= h->data[child] )
+				break;
+			h->data[child/2]=h->data[child];
+			child*=2;
+		}
+		h->data[child/2]=tem;
+	}
+	return h;
 }
 
 

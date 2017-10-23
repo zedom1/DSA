@@ -5,6 +5,8 @@ struct TreeNode
 	T data;
 	TreeNode<T> * left;
 	TreeNode<T> * right;
+	TreeNode ( T d , TreeNode<T>* l = NULL, TreeNode<T>* r = NULL )
+		:data(d),left(l),right(r){}
 };
 
 template <typename T>
@@ -42,11 +44,7 @@ template <typename T>
 TreeNode<T> * Insert( T x , TreeNode<T> * BST)
 {
 	if(!BST)
-	{
-		BST = new TreeNode<T>();
-		BST->data=x;
-		BST->left=BST->right=NULL;
-	}
+		return BST = new TreeNode<T>(x);
 	else
 	{
 		if(x<BST->data)
@@ -77,10 +75,10 @@ TreeNode<T> * Delete( T x , TreeNode<T> * BST)
 		else
 		{
 			tmp=BST;
-			if(!BST->left)
-				BST=BST->right;
-			else if(!BST->right)
+			if(BST->left)
 				BST=BST->left;
+			else
+				BST=BST->right;
 			delete tmp;
 		}
 	}

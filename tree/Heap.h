@@ -101,7 +101,7 @@ Heap<T>* BuildMinHeap( Heap<T>* h )
 		{
 			if( child != h->size  && h->data[child]>h.data[child+1])
 				child++;
-			if( h->data[parent]<= h->data[child] )
+			if( h->data[child/2]<= h->data[child] )
 				break;
 			h->data[child/2]=h->data[child];
 			child*=2;

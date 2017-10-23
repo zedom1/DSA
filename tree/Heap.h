@@ -93,7 +93,7 @@ Heap<T>* BuildMinHeap( Heap<T>* h )
 {
 	int parent, child;
 	T tem;
-	for( parent = h->size/2 ; h>=1 ; h-- )
+	for( parent = h->size/2 ; parent>=1 ; parent-- )
 	{
 		tem = h->data[parent];
 		child = parent *2;

@@ -161,25 +161,22 @@ void BinNode<T>::travPost_I( V & visit )
 	Stack<BinNode<T> *> s;
 	BinNode<T> * x=this;
 	s.push(x);
-	while(1)
+	while(!s.empty())
 	{
-		if(s.empty()) break;
 		if(s.top()!=x->parent)
 		{
 			x=s.top();
-			while(1)
+			while(x)
 			{
 				if(x->rChild) 
 					s.push(x->rChild);
-				if(c->lChild) 
+				if(x->lChild) 
 				{
 					s.push(x->lChild);
 					x=x->lChild;
 				}
-				else if(x->rChild)
-					x=x->rChild;
 				else
-					break;
+					x=x->rChild;
 			}
 		}
 		x=s.pop();
@@ -373,14 +370,11 @@ BinNode<T> * rebuildSub_PI( T* pre, T* ins, int len ) // 先序+中序重构
 {
 	BinNode<T> *s=NULL;
 	if(len<=0) return s;
+	s=new BinNode<T>(*pre);
 	if(len==1)
-	{
-		s=new BinNode<T>(*pre);
 		return s;
-	}
 	int i;
 	for(i=0; *(ins+i)!=*(pre); i++);
-	s=new BinNode<T>(*pre);
 	s->lChild=rebuildSub_PI( pre+1, ins, i );
 	s->rChild=rebuildSub_PI( pre+1+i, ins+i+1, len-i-1 );
 	return s;
@@ -405,6 +399,6 @@ BinNode<T> * rebuildSub_IP( T* ins, T* post, int len ) // 中序+后序重构
 	for(i=0; *(ins+i)!=*(post+len-1); i++);
 	s=new BinNode<T>(*(post+len-1));
 	s->lChild=rebuildSub_IP( ins, post, i );
-	s->rChild=rebuildSub_IP( ins+1+i, post+i, len-i-2 );
+	s->rChild=rebuildSub_IP( ins+1+i, post+i, len-i-1 );
 	return s;
 }

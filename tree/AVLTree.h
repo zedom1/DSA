@@ -1,4 +1,3 @@
-
 template <typename T>
 struct AVLTreeNode
 {
@@ -62,7 +61,7 @@ AVLTreeNode<T>* AVL_Insertion( T x , AVLTreeNode<T>* A)
 	else if( x < A->data )
 	{
 		A->left = AVL_Insertion(x , A->left);
-		if(A->left->height-A->right->height==2)
+		if( (!A->right && A->left->height==2)|| (A->right && A->left->height-A->right->height == 2) )
 			if( x<A->left->data )
 				A = SingleLeftRotation(A);
 			else
@@ -71,7 +70,7 @@ AVLTreeNode<T>* AVL_Insertion( T x , AVLTreeNode<T>* A)
 	else if( x > A->data )
 	{
 		A->right = AVL_Insertion( x, A->right );
-		if( A->left->height-A->right->height == -2)
+		if( (!A->left && A->right->height==2)|| (A->left && A->left->height-A->right->height == -2) )
 			if( x > A->right->data )
 				A = SingleRightRotation(A);
 			else
